@@ -1,18 +1,12 @@
 package utils
 
 import (
-	"encoding/json"
-	"log"
+	"fmt"
 
 	consulapi "github.com/hashicorp/consul/api"
 )
 
-type Config struct {
-	AccessKey string `json:"access_key"`
-	SecretKey string `json:"secret_key"`
-}
-
-func App_Package(addr string) {
+func AppPackage(addr string) (string, error) {
 	DefaultConfig := consulapi.DefaultConfig()
 	DefaultConfig.Address = "10.111.176.1:8500" // 设置Consul的地址
 
@@ -25,16 +19,13 @@ func App_Package(addr string) {
 	// 获取配置文件内容
 	pair, _, err := client.KV().Get(addr, nil)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
-	if pair != nil {
-		var C Config
-		err = json.Unmarshal(pair.Value, &C)
-		if err != nil {
-			log.Fatalf(err.Error())
-		}
-	} else {
-		//键不存在的情况
-		panic("键不存在")
+
+	if pair == nil {
+		return "", fmt.Errorf("No Value")
 	}
+
+	return string(pair.Value), nil
+
 }
