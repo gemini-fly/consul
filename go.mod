@@ -1,4 +1,4 @@
-module github.com/gemini-fly/consul.git
+module github.com/gemini-fly/consul
 
 go 1.20
 
